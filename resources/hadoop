@@ -1,6 +1,6 @@
 #!/bin/bash
 # chkconfig: 2345 95 20
-# description: Hadoop 2.3.x Service
+# description: Hadoop 2.7.x Service
 # processname: hadoop
 HADOOP_PREFIX=/usr/local/hadoop
 HADOOP_YARN_HOME=/usr/local/hadoop

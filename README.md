@@ -1,6 +1,6 @@
 # Introduction
 
-This Vagrant project creates a VM with single node setup of Hadoop v2.3.0 with YARN installed.
+This Vagrant project creates a VM with single node setup of Hadoop v2.7.0 with YARN and Giraph installed.
 
 # Getting Started
 
