@@ -3,7 +3,7 @@ export JAVA_HOME=/usr/local/java
 export HADOOP_PREFIX=/usr/local/hadoop
 HADOOP_VERSION=2.7.0
 HADOOP_ARCHIVE=hadoop-${HADOOP_VERSION}.tar.gz
-JAVA_ARCHIVE=jdk-7u51-linux-x64.gz
+JAVA_ARCHIVE=jdk-8u111-linux-x64.gz
 HADOOP_MIRROR_DOWNLOAD=http://apache.mirror.quintex.com/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz
 	
 function fileExists {
@@ -131,6 +131,19 @@ function initHdfsTempDir {
 	$HADOOP_PREFIX/bin/hdfs --config $HADOOP_PREFIX/etc/hadoop dfs -chmod -R 777 /tmp
 }
 
+function installGiraph {
+    echo "installing giraph"
+    curl -o /home/vagrant/giraph-dist-1.2.0-hadoop2-bin.tar.gz http://mirror.catn.com/pub/apache/giraph/giraph-1.2.0/giraph-dist-1.2.0-hadoop2-bin.tar.gz
+    tar -xzf /home/vagrant/giraph-dist-1.2.0-hadoop2-bin.tar.gz -C /usr/local
+}
+
+function setupGiraph {
+    echo "setting up giraph"
+    ln -s /usr/local/giraph-1.2.0-hadoop2-for-hadoop-2.5.1 /usr/local/giraph
+    echo 'export PATH=/usr/local/giraph/bin:${PATH}' >> /home/vagrant/.bash_profile
+    echo 'export HADOOP_HOME=${HADOOP_YARN_HOME}' >> /home/vagrant/.bash_profile
+}
+
 disableFirewall
 installJava
 installHadoop
@@ -141,3 +154,5 @@ setupNameNode
 setupHadoopService
 startHadoopService
 initHdfsTempDir
+installGiraph
+setupGiraph
