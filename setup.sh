@@ -1,11 +1,15 @@
 #!/bin/bash
 export JAVA_HOME=/usr/local/java
 export HADOOP_PREFIX=/usr/local/hadoop
-HADOOP_VERSION=2.7.0
+HADOOP_VERSION=2.7.2
 HADOOP_ARCHIVE=hadoop-${HADOOP_VERSION}.tar.gz
-JAVA_ARCHIVE=jdk-8u111-linux-x64.gz
+JAVA_VERSION=8u121
+JAVA_ARCHIVE=jdk-${JAVA_VERSION}-linux-x64.tar.gz
 HADOOP_MIRROR_DOWNLOAD=http://apache.mirror.quintex.com/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz
-	
+GIRAPH_VERSION=1.2.0
+GIRAPH_ARCHIVE=giraph-dist-${GIRAPH_VERSION}-hadoop2-bin.tar.gz
+GIRAPH_DOWNLOAD=http://mirror.catn.com/pub/apache/giraph/giraph-${GIRAPH_VERSION}/${GIRAPH_ARCHIVE}
+
 function fileExists {
 	FILE=/vagrant/resources/$1
 	if [ -e $FILE ]
@@ -49,7 +53,7 @@ function installRemoteHadoop {
 function setupJava {
 	echo "setting up java"
 	if fileExists $JAVA_ARCHIVE; then
-		ln -s /usr/local/jdk1.7.0_51 /usr/local/java
+		ln -s /usr/local/jdk1.8.0_121 /usr/local/java
 	else
 		ln -s /usr/lib/jvm/jre /usr/local/java
 	fi
@@ -131,10 +135,24 @@ function initHdfsTempDir {
 	$HADOOP_PREFIX/bin/hdfs --config $HADOOP_PREFIX/etc/hadoop dfs -chmod -R 777 /tmp
 }
 
-function installGiraph {
-    echo "installing giraph"
+function installLocalGiraph {
+	echo "installing local giraph"
+	FILE=/vagrant/resources/$GIRAPH_ARCHIVE
+	tar -xzf $FILE -C /usr/local
+}
+
+function installRemoteGiraph {
+    echo "installing remote giraph"
     curl -o /home/vagrant/giraph-dist-1.2.0-hadoop2-bin.tar.gz http://mirror.catn.com/pub/apache/giraph/giraph-1.2.0/giraph-dist-1.2.0-hadoop2-bin.tar.gz
     tar -xzf /home/vagrant/giraph-dist-1.2.0-hadoop2-bin.tar.gz -C /usr/local
+}
+
+function installGiraph {
+    if fileExists $GIRAPH_ARCHIVE; then
+        installLocalGiraph
+    else
+        installRemoteGiraph
+    fi
 }
 
 function setupGiraph {
